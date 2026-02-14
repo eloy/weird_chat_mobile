@@ -95,3 +95,24 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+
+-------
+
+ Run instructions for Android:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd "/Users/harlock/src/react-native/chat" && npx react-native run-android
+  
+  Run instructions for iOS:
+    • cd "/Users/harlock/src/react-native/chat"
+    
+    • npx react-native run-ios
+    - or -
+    • Open chat/ios/chat.xcworkspace in Xcode or run "xed -b ios"
+    • Hit the Run button
+    
+  Run instructions for macOS:
+    • See https://microsoft.github.io/react-native-macos for the latest up-to-date instructions.
+    
+
