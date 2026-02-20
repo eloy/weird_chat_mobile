@@ -27,7 +27,7 @@ function buildOptions() {
       primary: PRIMARY,
       light: "#FFA0A0",
       bright: "#EC2A2A",
-      secondary: SECONDARY,
+      secondary: PRIMARY,
       black: "#000",
       white: "#fff",
       gray_1: "#3e3e3e",
@@ -37,7 +37,7 @@ function buildOptions() {
       gray_5: "#E8E8E8",
       gray_6: "#EBEBEB",
       gray_7: "#EEEEEE",
-      text: '#505050',
+      text: '#fff',
       red: PRIMARY
     },
     images: {
@@ -101,7 +101,8 @@ function buildStylesIOS() {
       fontFamily: fonts.pro_display,
       fontWeight: FONT_WEIGHT.medium,
       fontSize: text_sizes.xlarge,
-      color: colors.text
+      color: colors.text,
+      paddingBottom: 21
     },
     h2_bold: {
       fontFamily: fonts.pro_display,
@@ -171,13 +172,13 @@ function buildStylesAndroid() {
       fontFamily: 'sf_pro_display_medium',
       fontWeight: FONT_WEIGHT.medium,
       fontSize: text_sizes.xlarge,
-      color: colors.text
+      color: colors.text,
     },
     h2_bold: {
       fontFamily: 'sf_pro_display_bold',
       fontWeight: FONT_WEIGHT.bold,
       fontSize: text_sizes.xlarge,
-      color: colors.text
+      color: colors.text,
     },
 
     h1: {
@@ -230,7 +231,7 @@ function buildButtonStyles() {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 10,
-      borderRadius: 30,
+      borderRadius: 8,
       justifyContent: 'space-around',
       minHeight: 50,
       marginHorizontal: 0,
@@ -353,8 +354,8 @@ function createLinkStyles() {
   let {colors} = getOpt();
   return StyleSheet.create({
     text: {
-      color: '#9B0101',
-      textDecorationColor: '#4A90E2',
+      color: PRIMARY,
+      textDecorationColor: PRIMARY,
       textDecorationLine: "underline"
     }
   });
@@ -376,7 +377,7 @@ function createTextInputStyles() {
       fontSize: 16,
       minHeight: 16,
       lineHeight: 24,
-      borderRadius: 43
+      borderRadius: 8
     },
     checkBoxcontainer: {
       flexDirection: 'row',
