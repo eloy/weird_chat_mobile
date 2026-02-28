@@ -1,7 +1,6 @@
-import React, { Component} from 'react';
+import React, {Component, createRef} from 'react';
 import {Platform, SafeAreaView, Keyboard, View, Image, Text, Pressable, StyleSheet, ScrollView, TextInput} from 'react-native';
 import BasicLayout from './basic_layout';
-import FirstMessageView from './first_message_view';
 import Stadox from '../stadox';
 import ApplicationConfig from '../application_config';
 import {PRIMARY, SECONDARY, GRAY, LIGHT_GRAY, BLACK} from '../colors';
@@ -15,8 +14,8 @@ const SEND_CONVO_DELAY = 3000;
 export default class Chat extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {convo: [], out_buffer: [], input: '', show_first_message_view: true};
+    let convo = createFakeConvo();
+    this.state = {convo, out_buffer: [], input: ''};
 
     this.ctx = Stadox.subscribe(this);
 
@@ -26,6 +25,8 @@ export default class Chat extends Component {
     this.scrollToBottom = this.scrollToBottom.bind(this);
     this.scheduleSendOutBuffer = this.scheduleSendOutBuffer.bind(this);
     this.sendOutBuffer = this.sendOutBuffer.bind(this);
+
+    this.messagesContainerRef = createRef();
   }
 
   componentDidMount() {
@@ -113,6 +114,7 @@ export default class Chat extends Component {
 
   onSubmitEditing() {
     let {input, convo, out_buffer} = this.state;
+    if (!input || input.length === 0) return;
 
     let message = {role: 'user', content: input};
     convo.push(message);
@@ -153,19 +155,15 @@ export default class Chat extends Component {
     this.setState({input});
   }
 
-  sendFirstMessage(first_message) {
-    this.setState({input: first_message, show_first_message_view: false}, this.onSubmitEditing);
-  }
-
   scrollToBottom() {
-    if (!this.refs.messagesContainer) return;
-    this.refs.messagesContainer.scrollToEnd();
+    if (!this.messagesContainerRef.current) return;
+    this.messagesContainerRef.current.scrollToEnd();
   }
 
   renderConvo() {
     let {convo} = this.state;
     return (
-      <ScrollView style={styles.messagesContainer} ref="messagesContainer">
+      <ScrollView style={styles.messagesContainer} ref={this.messagesContainerRef}>
         {convo.map((message, index) => {
           let peerStyle = message.role === 'user' ? styles.userMessage : styles.assistantMessage;
           return (
@@ -199,20 +197,15 @@ export default class Chat extends Component {
     return (
       <View style={styles.header}>
         <Image source={{uri: assistant.image_url}} style={styles.header_image}/>
-        <Text style={ styles.header_text}>{assistant.name}</Text>
+        <View style={styles.header_text_container}>
+          <Text style={ styles.header_text}>{assistant.name}</Text>
+        </View>
       </View>
     )
   }
 
-  renderFirstMessageView() {
-    let {assistant} = this.props;
-    return <FirstMessageView assistant={assistant} onSubmit={m => this.sendFirstMessage(m)} onCancel={e => this.setState({show_first_message_view: false})} />
-  }
 
   render() {
-    let {show_first_message_view} = this.state;
-    if (show_first_message_view) return this.renderFirstMessageView();
-
     return (
       <BasicLayout title="Chat" backButton={true} rightButtonIcon="ellipsis-v" menu={Menu} header={this.renderHeader()}>
         {this.renderConvo()}
@@ -231,26 +224,33 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    paddingBottom: 13
   },
   header_image: {
-    width: 32,
-    height: 32,
+    width: 55,
+    height: 55,
     borderRadius: 100
+  },
+  header_text_container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: 13
   },
   header_text: {
     marginLeft: 13,
     fontSize: 21,
-    color: GRAY,
-    fontWeight: '600'
+    color: LIGHT_GRAY,
+    fontWeight: '600',
   },
 
   inputContainer: {
     marginVertical: 13,
     marginHorizontal: 13,
+    paddingVertical: 5,
     borderWidth: 1,
     borderColor: GRAY,
-    borderRadius: 55,
+    borderRadius: 14,
     shadowOffset: {width: 50, height: 50},
     shadowColor: '#000',
     shadowOpacity: 1,
@@ -268,22 +268,25 @@ const styles = StyleSheet.create({
   },
 
   sendBtnContainer: {
-    marginRight: 8,
+    marginRight: 5,
     backgroundColor: PRIMARY,
-    width: 36,
-    height: 36,
+    width: 55,
+    height: 55,
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center'
   },
   logo: {
-    width: 21,
-    height: 21,
+    width: 34,
+    height: 34,
 
     resizeMode: 'cover'
   },
   messagesContainer: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#333',
+    paddingTop: 13,
+    paddingBottom: 21
   },
 
   message: {
@@ -311,18 +314,18 @@ const styles = StyleSheet.create({
 });
 
 
-// function createFakeConvo() {
-//   return [
-//     {role: "user", content: " ¿Hola que tal?"},
-//     {role: "assistant", content: "Muy bien gracias, ¿Que tal estás tu?"},
-//     {role: "user", content: "Yo tambien estoy bien. ¿Te apatece charlar?"},
-//     {role: "assistant", content: "Sí, me gusta charlar, ¡qué tal de ti? ¿De dónde eres?"},
-//     {role: "user", content: "Soy de Almoradi, ¿Y tu?"},
-//     {role: "assistant", content: "No soy de ningún lugar en particular, soy solo una persona que está pasando tiempo aquí en la red. ¿Y tú tienes algunos intereses o pasatiempos que querrías compartir?"},
-//     {role: "user", content: "Me gusta el sexo ¿Te gustaría practicarlo conmigo?"},
-//     {role: "assistant", content: "Lo siento, no estoy interesada en eso. Es importante mantener una conversación adecuada y respetuosa en línea. ¿Querrías hablar sobre algo más común o más ligero?"},
-//     {role: "user", content: "Claro, ¿en que trabajas?"},
-//     {role: "assistant", content: "Actualmente estoy estudiando en la universidad. ¿Y tú, ¿cómo te occupas?"},
-//     {role: "user", content: "Soy camionero"}
-//   ]
-// }
+function createFakeConvo() {
+  return [
+    {role: "user", content: " ¿Hola que tal?"},
+    {role: "assistant", content: "Muy bien gracias, ¿Que tal estás tu?"},
+    {role: "user", content: "Yo tambien estoy bien. ¿Te apatece charlar?"},
+    {role: "assistant", content: "Sí, me gusta charlar, ¡qué tal de ti? ¿De dónde eres?"},
+    {role: "user", content: "Soy de Almoradi, ¿Y tu?"},
+    {role: "assistant", content: "No soy de ningún lugar en particular, soy solo una persona que está pasando tiempo aquí en la red. ¿Y tú tienes algunos intereses o pasatiempos que querrías compartir?"},
+    {role: "user", content: "Me gusta el sexo ¿Te gustaría practicarlo conmigo?"},
+    {role: "assistant", content: "Lo siento, no estoy interesada en eso. Es importante mantener una conversación adecuada y respetuosa en línea. ¿Querrías hablar sobre algo más común o más ligero?"},
+    {role: "user", content: "Claro, ¿en que trabajas?"},
+    {role: "assistant", content: "Actualmente estoy estudiando en la universidad. ¿Y tú, ¿cómo te occupas?"},
+    {role: "user", content: "Soy camionero"}
+  ]
+}
