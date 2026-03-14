@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
 import {View, StyleSheet, StatusBar, Image, Text} from 'react-native';
+import {BLACK} from '../colors';
 
 const LOGO = require('../../assets/images/boot_logo.png');
 
@@ -14,7 +15,7 @@ export default class BootScreen extends Component {
       <View style={styles.main}>
         <StatusBar hidden={true} />
         <Image source={LOGO}  style={styles.logo} />
-        <Text style={styles.text}>ChaChaChat</Text>
+        <Text style={styles.text}></Text>
       </View>
     );
   }
@@ -24,7 +25,7 @@ export default class BootScreen extends Component {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "#FFBE98",
+    backgroundColor: BLACK,
     alignItems: 'center',
     justifyContent: 'center'
   },

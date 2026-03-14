@@ -16,11 +16,11 @@ export class Router extends Component {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', backHistory);
+    this.subscription = BackHandler.addEventListener('hardwareBackPress', backHistory);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', backHistory);
+    this.subscription.remove();
     this.ctx.unsubscribe(this);
   }
 
@@ -28,12 +28,10 @@ export class Router extends Component {
     let {initialized, current_route, api_token} = this.ctx.state();
 
     if (!initialized) {
-      console.log("boot");
       return [BootScreen];
     }
 
     if (!api_token) {
-      console.log("login");
       return [Login];
     }
 
@@ -43,7 +41,6 @@ export class Router extends Component {
       if (!element) throw("ERROR: Element not found: " + id);
       return [element, opt];
     } else {
-      console.log("home");
       return [HOME, []];
     }
     return false;
@@ -56,11 +53,12 @@ export class Router extends Component {
 }
 
 
-const HISTORY = [];
+const HISTORY = initHistory();
+
 
 export function pushHistory(id, opt={}) {
   let current_route = {id, opt};
-  if (id === 'today') {
+  if (id === 'assistants') {
     HISTORY.splice(0, HISTORY.length)
   } else {
     HISTORY.push(current_route);
@@ -87,5 +85,11 @@ export function updateRouteProps(changes) {
 }
 
 const ROUTE_MAPPING = {
+  assistants: Assistants,
   chat: Chat
+}
+
+
+function initHistory() {
+  return [];
 }

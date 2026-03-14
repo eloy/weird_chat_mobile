@@ -18,7 +18,7 @@ export default {
 
   get: function(key, name='root') {
     let stadox = scopes[name];
-    stadox.get(key);
+    return stadox.get(key);
   },
 
   state: function(name='root') {

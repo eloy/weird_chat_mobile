@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
 import {StyleSheet, StatusBar, SafeAreaView, View, TouchableOpacity, Text, Image, Animated} from 'react-native'
+import {Container, Header, Icon} from 'rnsuite';
 import {pushHistory, backHistory} from './navigator';
 import {PRIMARY, SECONDARY, GRAY, LIGHT_GRAY, BLACK} from '../colors';
 
@@ -50,7 +51,7 @@ export default class BasicLayout extends Component {
     if (false) return null;
     return (
       <TouchableOpacity style={ styles.header_right_button} onPress={e => this.onPressRightButton()}>
-        {/* <Icon name={rightButtonIcon || "cog"} style={styles.header_right_icon} /> */}
+        <Icon name={rightButtonIcon || "cog"} style={styles.header_right_icon} />
       </TouchableOpacity>
     );
   }

@@ -1,4 +1,9 @@
+import Stadox from './stadox';
+
 var buildHeaders = (opt) => {
+  let api_token = Stadox.get('api_token');
+
+
   let headers = {
     'Accept': 'application/json'
   }
@@ -7,9 +12,10 @@ var buildHeaders = (opt) => {
     headers['Content-Type'] = 'application/json';
   }
 
-  if (opt.api_token) {
-    headers['api_token'] = opt.api_token;
+  if (api_token) {
+    headers['Authentication'] = api_token;
   }
+
   return headers;
 }
 
@@ -35,7 +41,8 @@ const request = (method, url, data, opt={}) => {
         if(response.ok) {
           response.json().then((data) => done(data));
         } else {
-          response.json().then((data) => {
+          console.log("REQUEST ERROR", response);
+          response.text().then((data) => {
             // data._response = response;
             reject(data)
           });

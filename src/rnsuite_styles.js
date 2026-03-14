@@ -356,7 +356,8 @@ function createLinkStyles() {
     text: {
       color: PRIMARY,
       textDecorationColor: PRIMARY,
-      textDecorationLine: "underline"
+      textDecorationLine: "underline",
+      marginBottom: 21
     }
   });
 }
@@ -366,7 +367,7 @@ function createTextInputStyles() {
   let {colors} = getOpt();
   return StyleSheet.create({
     input: {
-      marginBottom: 15,
+      marginBottom: 21,
       paddingHorizontal: 10,
       paddingBottom: 10,
       paddingTop: 5,

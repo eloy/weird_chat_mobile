@@ -14,7 +14,7 @@ const SEND_CONVO_DELAY = 3000;
 export default class Chat extends Component {
   constructor(props) {
     super(props);
-    let convo = createFakeConvo();
+    let convo = [];
     this.state = {convo, out_buffer: [], input: ''};
 
     this.ctx = Stadox.subscribe(this);
@@ -38,9 +38,8 @@ export default class Chat extends Component {
   getUrl() {
     let {assistant} = this.props;
     let {api_token} = this.ctx.state();
-    let {backend_url} = ApplicationConfig.get();
-    let url = backend_url.replace('http', 'ws');
-    return `${url}/ws?assistant_id=${assistant.id}&token=${api_token}`;
+    let {websocket_url} = ApplicationConfig.get();
+    return `${websocket_url}/ws?assistant_id=${assistant.id}&token=${api_token}`;
   }
 
   connect() {

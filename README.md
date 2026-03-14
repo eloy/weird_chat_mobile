@@ -103,16 +103,50 @@ To learn more about React Native, take a look at the following resources:
  Run instructions for Android:
     • Have an Android emulator running (quickest way to get started), or a device connected.
     • cd "/Users/harlock/src/react-native/chat" && npx react-native run-android
-  
+
   Run instructions for iOS:
     • cd "/Users/harlock/src/react-native/chat"
-    
+
     • npx react-native run-ios
     - or -
     • Open chat/ios/chat.xcworkspace in Xcode or run "xed -b ios"
     • Hit the Run button
-    
+
   Run instructions for macOS:
     • See https://microsoft.github.io/react-native-macos for the latest up-to-date instructions.
-    
 
+
+
+
+
+## Develpment
+### Start Metro
+
+    npm start  -- --reset-cache
+
+### Start the emulator
+
+    npx react-native run-ios
+    npx react-native run-android
+
+## Releases
+### Android
+Setup the keystore
+Generate the key
+
+     keytool -genkey -v -keystore keystores/weird_chat_mobile.keystore -alias weird_chat_mobile -keyalg RSA -keysize 2048 -validity 10000
+
+Add to ~/.gradle/gradle.properties:
+
+    WEIRD_CHAT_MOBILE_RELEASE_STORE_FILE=../keystores/weird_chat_mobile.keystore
+    WEIRD_CHAT_MOBILE_RELEASE_KEY_ALIAS=weird_chat_mobile
+    WEIRD_CHAT_MOBILE_RELEASE_STORE_PASSWORD=PASSWORD
+    WEIRD_CHAT_MOBILE_RELEASE_KEY_PASSWORD=PASSWORD
+
+Build the release
+
+    cd android && ./gradlew assembleRelease && cd ..
+
+Install the release
+
+    adb install -r  android/app/build/outputs/apk/release/app-release.apk

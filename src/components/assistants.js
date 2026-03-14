@@ -26,11 +26,10 @@ export default class Asssitants extends Component {
   fetchAssistants() {
     this.setState({loading: true});
     let {backend_url} = ApplicationConfig.get();
-    let url = backend_url + "/assistants";
+    let url = backend_url + "/api/assistants";
     Request('GET', url).then(assistants => {
       // set the image url
-      assistants.forEach(a => a.image_url = backend_url + a.image_path);
-
+      assistants.forEach(a => a.image_url = backend_url + a.profile_image);
       this.setState({assistants, loading: false});
 
       let image_urls = assistants.map(a => a.image_url);
@@ -105,8 +104,8 @@ const styles = StyleSheet.create({
   image_container: {
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 377,
+    height: 377,
     borderRadius: 34
   },
   select_container: {

@@ -19,16 +19,15 @@ export default async function() {
   setupComponentStyles();
 
   // Add listener for dark mode switch
-  // Appearance.addChangeListener(preferences => {
-  //   Stadox.set('color_scheme', preferences.colorScheme);
-  // });
+  Appearance.addChangeListener(preferences => {
+    Stadox.set('color_scheme', preferences.colorScheme);
+  });
 
   // Move local settings to stadox
   let {confirmation_code_request_at, user_id, api_token} = await LocalSettings.getAll(['confirmation_code_request_at', 'user_id', 'api_token']);
   Stadox.set('user_id', user_id);
   Stadox.set('api_token', api_token);
   Stadox.set('confirmation_code_request_at', +confirmation_code_request_at);
-
 
   let {boot_delay} = ApplicationConfig.get();
   let delay = boot_delay - (new Date().getTime() - started_at.getTime());

@@ -12,6 +12,10 @@ export default {
   model_created: '{{model}} creado',
   model_updated: '{{model}} actualizado',
   show_password: 'mostrar password',
+  name: 'nombre',
+  password: 'contraseña',
+  password_confirmation: 'confirmar contraseña',
+  email: 'email',
   menu: {
     sign_out: 'Cerrar sesión',
     open_new_chat: 'Empezar nuevo chat'

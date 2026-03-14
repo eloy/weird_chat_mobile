@@ -1,12 +1,15 @@
 import React, { Component} from 'react';
 import {Platform, StyleSheet, SafeAreaView, Image, View, KeyboardAvoidingView, ScrollView, latform} from 'react-native'
+import { authorize } from 'react-native-app-auth';
+
 import BasicLayout from './basic_layout';
-import {Container, H1, Link, Text} from 'rnsuite';
+import {Container, H1, Link, Text, Button} from 'rnsuite';
 import Form from './form';
 import ApplicationConfig from '../application_config';
 import LocalSettings from '../local_settings';
 import Request from '../request';
 import Stadox from '../stadox';
+import {titleize} from 'inflected';
 
 import I18n from '../i18n'
 import {BLACK, PRIMARY, SECONDARY, LIGHT_GRAY} from '../colors';
@@ -73,13 +76,13 @@ export default class Login extends Component {
 
 class LoginForm extends Component {
    constructor(props) {
-    super(props);
-    let user = {email: ''};
-    this.state = {user};
+     super(props);
+     let user = {email: '', password: ''};
+     this.state = {user};
 
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
+     this.onChange = this.onChange.bind(this);
+     this.onSubmit = this.onSubmit.bind(this);
+   }
 
   componentDidMount() {
     LocalSettings.get('user_email').then(email => {
@@ -94,20 +97,12 @@ class LoginForm extends Component {
   onSubmit() {
     let {user} = this.state;
     let {backend_url} = ApplicationConfig.get();
-    let url = backend_url + "/users/send_code"
+    let url = backend_url + "/api/sessions"
     this.setState({submitting: true});
 
-    Request('POST', url, {user}).then(user => {
-      let confirmation_code_request_at = Date.now()
-
-      let promises = [
-        LocalSettings.set('user_email', user.email),
-        LocalSettings.set('confirmation_code_request_at', confirmation_code_request_at),
-      ]
-
-      Promise.all(promises).then(() => {
-        this.props.showCodeForm();
-      });
+    Request('POST', url, {user}).then((response) => {
+      LocalSettings.set('api_token', response.token);
+      Stadox.set('api_token', response.token);
     }).catch(errors => {
       console.log("ERROR", errors);
       this.setState({errors, submitting: false});
@@ -117,7 +112,8 @@ class LoginForm extends Component {
 
   fields() {
     return [
-      {name: 'email', label: 'Email', type: 'email', required: true, extra: {onSubmitEditing: this.onSubmit}},
+      {name: 'email', label: titleize(I18n.t('email')), type: 'email', required: true},
+      {name: 'password', label: titleize(I18n.t('password')), type: 'password', required: true, extra: {onSubmitEditing: this.onSubmit}},
     ];
   }
 
@@ -133,8 +129,8 @@ class LoginForm extends Component {
           <Form submitLabel={I18n.t('submit')} model={user} fields={this.fields()} onChange={this.onChange} onSubmit={this.onSubmit} onCancel={this.onCancel} errors={errors} submitting={submitting} />
         </View>
         <View style={styles.actionLink}>
-          <Link text={I18n.t('login.code_received')} onPress={this.props.showCodeForm}/>
           <Link text={I18n.t('login.no_account_yet')} onPress={this.props.showSignupForm}/>
+          <GoogleOauth />
         </View>
       </View>
     )
@@ -145,7 +141,7 @@ class LoginForm extends Component {
 class SignupForm extends Component {
   constructor(props) {
     super(props);
-    let user = {name: '', email: '', gender: ''};
+    let user = {name: '', email: ''};
     this.state = {user};
 
     this.onChange = this.onChange.bind(this);
@@ -160,10 +156,11 @@ class SignupForm extends Component {
   onSubmit() {
     let {user} = this.state;
     let {backend_url} = ApplicationConfig.get();
-    let url = backend_url + "/users"
+    let url = backend_url + "/api/users"
     this.setState({submitting: true});
 
     Request('POST', url, {user}).then(user => {
+
       // Save the user details
       let confirmation_code_request_at = Date.now()
       let promises = [
@@ -188,9 +185,10 @@ class SignupForm extends Component {
 
   fields() {
     return [
-      {name: 'name', label: 'Nombre', required: true},
-      {name: 'email', label: 'Email', type: 'email', required: true},
-      {name: 'gender', label: 'Genero', type: 'radio', collection: GENDERS}
+      {name: 'name', label: titleize(I18n.t('name')), required: true},
+      {name: 'email', label: titleize(I18n.t('email')), type: 'email', required: true},
+      {name: 'password', label: titleize(I18n.t('password')), type: 'password', required: true},
+      {name: 'password_confirmation', label: titleize(I18n.t('password_confirmation')), type: 'password', required: true, extra: {onSubmitEditing: this.onSubmit}},
     ];
   }
 
@@ -207,6 +205,7 @@ class SignupForm extends Component {
         <View style={styles.actionLink}>
           <Link text={I18n.t('login.account_created_already')} onPress={this.props.showLoginForm}/>
           <Link text={I18n.t('login.code_received')} onPress={this.props.showCodeForm}/>
+          <GoogleOauth />
         </View>
       </View>
     )
@@ -285,6 +284,41 @@ class CodeForm extends Component {
   }
 }
 
+
+class GoogleOauth extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+
+  sign_in(e) {
+    console.log("sign in");
+    let {google_client_id_ios, google_client_id_android} = ApplicationConfig.get();
+    let google_client_id = Platform.OS === 'ios' ? google_client_id_ios : google_client_id_android;
+
+    let config = {
+      issuer: 'https://accounts.google.com',
+      clientId: `${google_client_id}.apps.googleusercontent.com`,
+      redirectUrl: `com.googleusercontent.apps.${google_client_id}:/oauth2redirect/google`,
+      scopes: ['openid', 'profile'],
+    };
+
+    // Log in to get an authentication token
+    authorize(config).then(authState => {
+      console.log(authState);
+    });
+  }
+
+
+  render() {
+    return (
+      <View>
+        <Text>FOO</Text>
+        <Button onPress={e => this.sign_in(e)} text="Login with Google" />
+      </View>
+    )
+  }
+}
 
 const GENDERS = {
   male: 'Hombre',
