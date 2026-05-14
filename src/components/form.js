@@ -286,7 +286,7 @@ class CheckboxInput extends FormField {
     return value ? 'Yes' : 'No';
   }
 
-  renderInput() {
+  XrenderInput() {
     let {field, value, errors, onChange} = this.props;
     let labelRequired = field.required ? <abbr title="required">*</abbr> : null;
 
@@ -302,6 +302,11 @@ class CheckboxInput extends FormField {
         {this.renderErrors(errors)}
       </div>
     )
+  }
+
+  renderInput() {
+    let {field, value} = this.props;
+    return <Checkbox label={field.name} />
   }
 }
 
@@ -396,11 +401,11 @@ class MultipleCheckboxesInput extends FormField {
   onChange(e) {
     let {field, onChange, value} = this.props;
     if (!value) value = [];
-    let option_id = e.target.value;
+    let option_id = e.target.name;
     let index = value.indexOf(option_id)
 
     if ( index === -1) {
-      value.push(e.target.value);
+      value.push(option_id);
     } else {
       value.splice(index, 1);
     }
@@ -410,7 +415,7 @@ class MultipleCheckboxesInput extends FormField {
     onChange({target: {name: field.name, value}}, meta);
   }
 
-  renderInput() {
+  xrenderInput() {
     let {field, value, onChange} = this.props;
     if (!value) value = [];
 
@@ -429,6 +434,19 @@ class MultipleCheckboxesInput extends FormField {
         </div>
       );
     }));
+  }
+
+  renderInput() {
+    let {field, value, onChange} = this.props;
+    if (!value) value = [];
+    let options = buildOptions(field);
+
+      return this.renderFormGroup(
+        options.map(option => {
+          let checked = value.findIndex(id => id === option.id) !== -1;
+          return <Checkbox key={option.id} name={option.id} label={option.label} value={checked} onChange={e => this.onChange(e)} />
+        })
+    )
   }
 }
 
