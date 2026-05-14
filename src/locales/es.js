@@ -16,6 +16,7 @@ export default {
   password: 'contraseña',
   password_confirmation: 'confirmar contraseña',
   email: 'email',
+  years: 'años',
   menu: {
     sign_out: 'Cerrar sesión',
     open_new_chat: 'Empezar nuevo chat'
@@ -39,7 +40,17 @@ export default {
     }
   },
   assistants: {
-    title: '¿Con quien quieres hablar?'
+    title: 'Escoge a tu acompañante'
+  },
+  setup_filters: {
+    title: 'Configura tus preferencias',
+    gender: 'Género',
+    gender_male: 'Hombres',
+    gender_female: 'Mujeres',
+    category: 'Categoria',
+    humans: 'Humanos',
+    manga: 'Manga',
+    submit: 'Guardar Prefencias'
   },
   chat: {
     input_placeholder: 'Escribe algo bonito'

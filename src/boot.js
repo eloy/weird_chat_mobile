@@ -1,4 +1,4 @@
-import {Appearance} from 'react-native';
+import {Appearance, Dimensions} from 'react-native';
 import Stadox from './stadox';
 import {setupComponentStyles} from './rnsuite_styles';
 import {initTranslations} from './translations';
@@ -29,6 +29,9 @@ export default async function() {
   Stadox.set('api_token', api_token);
   Stadox.set('confirmation_code_request_at', +confirmation_code_request_at);
 
+  // Get window dimensions
+  Stadox.set('dimensions', getWindowDimensions())
+
   let {boot_delay} = ApplicationConfig.get();
   let delay = boot_delay - (new Date().getTime() - started_at.getTime());
   if (delay < 0) {
@@ -36,4 +39,14 @@ export default async function() {
   } else {
     setTimeout(e => Stadox.set('initialized', true), delay);
   }
+}
+
+
+
+
+function getWindowDimensions() {
+  let dimensions = Dimensions.get('window');
+  let width = Math.min(dimensions.width, dimensions.height);
+  let height = Math.max(dimensions.width, dimensions.height);
+  return {width, height};
 }
